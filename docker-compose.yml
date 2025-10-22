@@ -1,0 +1,138 @@
+# Beszel Hub Docker Compose Configuration
+# Deploy with: docker compose up -d
+# Location: /opt/beszel-hub/docker-compose.yml on monitoring.inproma.de
+
+services:
+  beszel:
+    image: 'henrygd/beszel:latest'
+    container_name: 'beszel-hub'
+    restart: unless-stopped
+    ports:
+      - '8090:8090'
+    volumes:
+      # Persistent data storage
+      - ./beszel_data:/beszel_data
+      # Optional: Custom configuration
+      # - ./config:/config:ro
+    environment:
+      # Basic Configuration
+      TZ: 'Europe/Berlin'
+      LOG_LEVEL: 'info'
+      
+      # Admin credentials (set on first login if not specified)
+      # ADMIN_USER: 'admin@inproma.de'
+      # ADMIN_PASS: 'secure_password_here'
+      
+      # Database Configuration
+      DB_PATH: '/beszel_data/data.db'
+      DB_MAX_CONNECTIONS: '10'
+      
+      # Backup Configuration
+      BACKUP_ENABLED: 'true'
+      BACKUP_SCHEDULE: '0 2 * * *'  # Daily at 2 AM
+      BACKUP_RETENTION: '7'          # Keep 7 days of backups
+      BACKUP_PATH: '/beszel_data/backups'
+      
+      # Optional: S3 Backup Configuration
+      # BACKUP_S3_ENABLED: 'true'
+      # BACKUP_S3_BUCKET: 'beszel-backups'
+      # BACKUP_S3_REGION: 'eu-central-1'
+      # BACKUP_S3_ACCESS_KEY: '${S3_ACCESS_KEY}'
+      # BACKUP_S3_SECRET_KEY: '${S3_SECRET_KEY}'
+      # BACKUP_S3_ENDPOINT: 'https://s3.eu-central-1.amazonaws.com'
+      
+      # Alert Configuration
+      ALERT_CHECK_INTERVAL: '60'     # Check alerts every 60 seconds
+      ALERT_COOLDOWN: '300'          # 5 minutes between same alerts
+      
+      # Optional: Email Configuration for Alerts
+      # SMTP_HOST: 'smtp.gmail.com'
+      # SMTP_PORT: '587'
+      # SMTP_USER: 'alerts@inproma.de'
+      # SMTP_PASS: '${SMTP_PASSWORD}'
+      # SMTP_FROM: 'Beszel Monitoring <alerts@inproma.de>'
+      # SMTP_TLS: 'true'
+      
+      # Optional: Webhook Configuration
+      # WEBHOOK_URL: 'https://hooks.slack.com/services/...'
+      # WEBHOOK_SECRET: '${WEBHOOK_SECRET}'
+      
+      # Performance Tuning
+      METRICS_RETENTION: '30'        # Days to keep metrics
+      METRICS_AGGREGATION: '5m'      # Aggregate metrics every 5 minutes
+      CACHE_TTL: '300'               # Cache TTL in seconds
+      
+      # Security Settings
+      CORS_ORIGINS: 'http://monitoring.inproma.de:8090'
+      SESSION_TIMEOUT: '86400'       # 24 hours
+      MAX_LOGIN_ATTEMPTS: '5'
+      LOGIN_LOCKOUT_TIME: '900'      # 15 minutes
+      
+      # Optional: OAuth/OIDC Configuration
+      # OAUTH_ENABLED: 'true'
+      # OAUTH_PROVIDER: 'google'
+      # OAUTH_CLIENT_ID: '${OAUTH_CLIENT_ID}'
+      # OAUTH_CLIENT_SECRET: '${OAUTH_CLIENT_SECRET}'
+      # OAUTH_REDIRECT_URI: 'http://monitoring.inproma.de:8090/auth/callback'
+      
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8090/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: '2G'
+        reservations:
+          cpus: '0.5'
+          memory: '512M'
+    
+    # Logging configuration
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '10m'
+        max-file: '5'
+        compress: 'true'
+    
+    # Network configuration
+    networks:
+      - beszel-net
+
+# Optional: Reverse Proxy with Traefik
+#  traefik:
+#    image: 'traefik:v3.0'
+#    container_name: 'traefik'
+#    restart: unless-stopped
+#    ports:
+#      - '80:80'
+#      - '443:443'
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#      - ./traefik/traefik.yml:/traefik.yml:ro
+#      - ./traefik/acme.json:/acme.json
+#    networks:
+#      - beszel-net
+#    labels:
+#      - "traefik.enable=true"
+#      - "traefik.http.routers.traefik.rule=Host(`traefik.monitoring.inproma.de`)"
+#      - "traefik.http.routers.traefik.entrypoints=websecure"
+#      - "traefik.http.routers.traefik.service=api@internal"
+#      - "traefik.http.routers.traefik.tls.certresolver=letsencrypt"
+
+networks:
+  beszel-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24
+
+# Volumes for persistent data
+volumes:
+  beszel_data:
+    driver: local

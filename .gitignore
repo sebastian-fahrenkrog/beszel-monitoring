@@ -1,0 +1,167 @@
+# Beszel Monitoring - Security-focused .gitignore
+
+# Sensitive configuration files
+config.yml
+**/config.yml
+*.env
+.env*
+secrets.yml
+credentials.yml
+
+# Authentication and keys
+*.key
+*.pem
+*.p12
+*.pfx
+id_*
+**/id_*
+agent_key*
+*_key*
+token.txt
+auth_token*
+
+# Backup files with potential sensitive data
+*.backup
+*.bak
+*.orig
+backups/
+**/backups/
+
+# Logs that might contain sensitive information
+*.log
+logs/
+**/logs/
+/var/log/
+systemd-private-*
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Runtime and cache
+*.pid
+*.lock
+cache/
+**/cache/
+
+# Database files (if using local SQLite)
+*.db
+*.sqlite
+*.sqlite3
+beszel_data/
+**/beszel_data/
+
+# Docker volumes and data
+docker-data/
+**/docker-data/
+volumes/
+
+# OS-specific files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Go specific
+/vendor/
+*.test
+*.prof
+coverage.out
+
+# Node.js (if any frontend components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# SSH configurations and known hosts
+ssh_config
+known_hosts
+**/known_hosts
+
+# Systemd service files with embedded secrets
+*-with-secrets.service
+
+# Installation artifacts
+install.log
+deployment.log
+setup.log
+
+# Test files that might contain real credentials
+*_test_credentials*
+test_secrets*
+
+# Archive files that might contain backups
+*.tar.gz
+*.zip
+*.rar
+containing sensitive data
+
+# Certificate files
+*.crt
+*.cert
+*.ca-bundle
+*.p7b
+*.p7s
+*.der
+
+# GPG keys
+*.gpg
+*.asc
+secring.*
+pubring.*
+
+# Kubernetes secrets and configs (if used for deployment)
+k8s-secrets.yml
+kube-config
+*.kubeconfig
+
+# Terraform state files (might contain sensitive data)
+*.tfstate
+*.tfstate.*
+.terraform/
+
+# Ansible vault files
+vault.yml
+*-vault.yml
+*.vault
+
+# Personal notes and documentation with sensitive info
+PERSONAL_NOTES.md
+CREDENTIALS.md
+PASSWORDS.md
+TODO_PRIVATE.md
+
+# Files containing hardcoded credentials (do not commit)
+CLAUDE.md
+QUICK_REFERENCE.md
+INSTALLATION_INSTRUCTIONS.md
+NEW_SERVER_SETUP.md
+WEBSOCKET_TROUBLESHOOTING.md
+CONFIG_MANAGEMENT.md
+
+# Backup directories with potential sensitive data
+backups/
+current_systems.json
+
+# Old installation scripts that may contain hardcoded values
+install_beszel_agent.sh
+install-agent.sh
+install-hub.sh
+configure-agent.sh
+maintenance.sh
+health-check.sh
+deployment-*.sh
+deployment-*.md
