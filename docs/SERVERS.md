@@ -1,0 +1,92 @@
+# Monitored Servers
+
+This document tracks all servers currently monitored by the Beszel monitoring system.
+
+## Hub Server
+
+| Server | URL | Type | Status | Notes |
+|--------|-----|------|--------|-------|
+| monitoring.inproma.de | https://monitoring.inproma.de | Hub | ✅ Active | Docker deployment with nginx proxy |
+
+## Monitored Agents
+
+| Hostname | IP/Domain | Added | Status | Specs | Notes |
+|----------|-----------|-------|--------|-------|-------|
+| hosting.dev.testserver.online | m.dev.testserver.online | 2024-10-21 | ✅ Active | Linux | First agent, used for testing WebSocket mode |
+| ai.content-optimizer.de | ai.content-optimizer.de | 2024-10-22 | ✅ Active | 20 CPU, 62GB RAM, RTX 4000 GPU, Docker | Production AI server with GPU monitoring |
+
+## Installation History
+
+### ai.content-optimizer.de (Latest)
+- **Date**: 2024-10-22
+- **Method**: Secure self-hosted script from GitHub
+- **Installation Command**:
+```bash
+export BESZEL_HUB_URL='https://monitoring.inproma.de'
+export BESZEL_TOKEN='c8a8c7a7-135a-4818-ad7a-0f8581aadc96'
+export BESZEL_KEY='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILG/StjM0ypoZOCqF+lLrqznYd4y45GKaKGOB6RbXc2H'
+export BESZEL_AUTO_UPDATE='true'
+
+curl -fsSL 'https://raw.githubusercontent.com/sebastian-fahrenkrog/beszel-monitoring/main/scripts/install-beszel-agent.sh' | bash -s -- install
+```
+- **Features**: Auto-updates enabled, Docker monitoring, GPU monitoring
+- **Service Status**: Active (running)
+
+### hosting.dev.testserver.online
+- **Date**: 2024-10-21
+- **Method**: Initial testing with various scripts
+- **Key Learning**: Discovered correct SSH key location (`/beszel_data/id_ed25519`)
+- **Status**: Successfully connected after fixing authentication
+
+## System Capabilities
+
+### GPU Monitoring
+- ai.content-optimizer.de: NVIDIA RTX 4000 SFF Ada Generation
+- Metrics: Temperature, memory usage, utilization, power draw
+
+### Docker Monitoring
+- Both servers have Docker installed
+- Agent user added to docker group for container statistics
+- Monitors container CPU, memory, network usage
+
+## Adding New Servers
+
+To add a new server, use the helper script:
+
+```bash
+# From monitoring repository
+./scripts/add-server.sh root@new-server.com
+
+# Or use direct installation
+export BESZEL_HUB_URL='https://monitoring.inproma.de'
+export BESZEL_TOKEN='c8a8c7a7-135a-4818-ad7a-0f8581aadc96'
+export BESZEL_KEY='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILG/StjM0ypoZOCqF+lLrqznYd4y45GKaKGOB6RbXc2H'
+export BESZEL_AUTO_UPDATE='true'
+
+curl -fsSL https://raw.githubusercontent.com/sebastian-fahrenkrog/beszel-monitoring/main/scripts/install-beszel-agent.sh | sudo -E bash -s -- install
+```
+
+## Maintenance Commands
+
+### Check Agent Status
+```bash
+systemctl status beszel-agent
+journalctl -u beszel-agent -f
+```
+
+### Update Agent
+```bash
+sudo /opt/beszel-agent/beszel-agent update
+```
+
+### Restart Agent
+```bash
+sudo systemctl restart beszel-agent
+```
+
+## Notes
+
+- Universal token auto-renews every hour when used
+- WebSocket connection allows agent-initiated connection (no inbound firewall rules needed)
+- Auto-update runs daily at 3 AM with 1-hour random delay
+- All servers appear in dashboard with their hostname
