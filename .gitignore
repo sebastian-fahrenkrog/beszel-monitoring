@@ -144,11 +144,9 @@ CREDENTIALS.md
 PASSWORDS.md
 TODO_PRIVATE.md
 
-# Files containing hardcoded credentials (do not commit)
-CLAUDE.md
+# Legacy files with hardcoded credentials (no longer used)
 QUICK_REFERENCE.md
 INSTALLATION_INSTRUCTIONS.md
-NEW_SERVER_SETUP.md
 WEBSOCKET_TROUBLESHOOTING.md
 CONFIG_MANAGEMENT.md
 
