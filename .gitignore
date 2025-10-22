@@ -164,4 +164,4 @@ configure-agent.sh
 maintenance.sh
 health-check.sh
 deployment-*.sh
-deployment-*.md
+deployment-*.mdai_docs/src/
