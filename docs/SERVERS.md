@@ -13,24 +13,25 @@ This document tracks all servers currently monitored by the Beszel monitoring sy
 | Hostname | IP/Domain | Added | Status | Specs | Notes |
 |----------|-----------|-------|--------|-------|-------|
 | hosting.dev.testserver.online | m.dev.testserver.online | 2024-10-21 | ✅ Active | Linux | First agent, used for testing WebSocket mode |
-| ai.content-optimizer.de | ai.content-optimizer.de | 2024-10-22 | ✅ Active | 20 CPU, 62GB RAM, RTX 4000 GPU, Docker | Production AI server with GPU monitoring |
+| ~~ai.content-optimizer.de~~ | ~~ai.content-optimizer.de~~ | ~~2024-10-22~~ | ❌ Removed 2024-10-22 | ~~20 CPU, 62GB RAM, RTX 4000 GPU, Docker~~ | ~~Production AI server with GPU monitoring~~ |
 
 ## Installation History
 
-### ai.content-optimizer.de (Latest)
-- **Date**: 2024-10-22
+### ai.content-optimizer.de (Removed)
+- **Added**: 2024-10-22
+- **Removed**: 2024-10-22
 - **Method**: Secure self-hosted script from GitHub
-- **Installation Command**:
+- **Removal Process**:
 ```bash
-export BESZEL_HUB_URL='https://monitoring.inproma.de'
-export BESZEL_TOKEN='c8a8c7a7-135a-4818-ad7a-0f8581aadc96'
-export BESZEL_KEY='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILG/StjM0ypoZOCqF+lLrqznYd4y45GKaKGOB6RbXc2H'
-export BESZEL_AUTO_UPDATE='true'
-
-curl -fsSL 'https://raw.githubusercontent.com/sebastian-fahrenkrog/beszel-monitoring/main/scripts/install-beszel-agent.sh' | bash -s -- install
+# Stopped and removed agent
+systemctl stop beszel-agent.service
+systemctl disable beszel-agent.service
+rm -rf /opt/beszel-agent /var/lib/beszel-agent
+userdel beszel
+systemctl daemon-reload
 ```
-- **Features**: Auto-updates enabled, Docker monitoring, GPU monitoring
-- **Service Status**: Active (running)
+- **Reason**: No longer needed for monitoring
+- **Features**: Had auto-updates, Docker monitoring, GPU monitoring
 
 ### hosting.dev.testserver.online
 - **Date**: 2024-10-21
@@ -65,6 +66,29 @@ export BESZEL_AUTO_UPDATE='true'
 
 curl -fsSL https://raw.githubusercontent.com/sebastian-fahrenkrog/beszel-monitoring/main/scripts/install-beszel-agent.sh | sudo -E bash -s -- install
 ```
+
+## Removing Servers
+
+To remove a server from monitoring:
+
+```bash
+# SSH to the server
+ssh root@server-to-remove.com
+
+# Stop and uninstall agent
+systemctl stop beszel-agent.service
+systemctl disable beszel-agent.service
+
+# Use uninstall script
+curl -fsSL https://raw.githubusercontent.com/sebastian-fahrenkrog/beszel-monitoring/main/scripts/install-beszel-agent.sh | bash -s -- uninstall
+
+# Or manual cleanup
+rm -rf /opt/beszel-agent /var/lib/beszel-agent
+userdel beszel
+systemctl daemon-reload
+```
+
+See [REMOVE_SERVER.md](REMOVE_SERVER.md) for complete removal documentation.
 
 ## Maintenance Commands
 
