@@ -14,11 +14,29 @@ This document tracks all servers currently monitored by the Beszel monitoring sy
 |----------|-----------|-------|--------|-------|-------|
 | hosting.dev.testserver.online | m.dev.testserver.online | 2024-10-21 | ✅ Active | Linux | First agent, used for testing WebSocket mode |
 | master.corespot-manager.com | inproma.dataguide.de | 2024-10-22 | ✅ Active | 16 CPU, 61GB RAM, Docker | Production server |
+| backup-server | backup01.inproma.de | 2024-10-22 | ✅ Active | 6 CPU (AMD Ryzen 5 3600), 62GB RAM | Backup server |
 | ~~ai.content-optimizer.de~~ | ~~ai.content-optimizer.de~~ | ~~2024-10-22~~ | ❌ Removed 2024-10-22 | ~~20 CPU, 62GB RAM, RTX 4000 GPU, Docker~~ | ~~Production AI server with GPU monitoring~~ |
 
 ## Installation History
 
-### master.corespot-manager.com (Latest)
+### backup-server (Latest)
+- **Added**: 2024-10-22
+- **Method**: Secure self-hosted script from GitHub
+- **Universal Token**: 4087a54a-8935-426c-b8ab-eae23ad8df4c (verified active before installation)
+- **Installation Command**:
+```bash
+# Token was already active from previous installation
+export BESZEL_HUB_URL='https://monitoring.inproma.de'
+export BESZEL_TOKEN='4087a54a-8935-426c-b8ab-eae23ad8df4c'
+export BESZEL_KEY='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILG/StjM0ypoZOCqF+lLrqznYd4y45GKaKGOB6RbXc2H'
+export BESZEL_AUTO_UPDATE='true'
+
+curl -fsSL https://raw.githubusercontent.com/sebastian-fahrenkrog/beszel-monitoring/main/scripts/install-beszel-agent.sh | bash -s -- install
+```
+- **Status**: Successfully connected immediately
+- **Specs**: AMD Ryzen 5 3600 6-Core, 62GB RAM, 98GB disk
+
+### master.corespot-manager.com
 - **Added**: 2024-10-22
 - **Method**: Secure self-hosted script from GitHub
 - **Universal Token**: 4087a54a-8935-426c-b8ab-eae23ad8df4c (regenerated before installation)
