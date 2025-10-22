@@ -4,7 +4,23 @@ This guide explains how to properly remove a server from Beszel monitoring.
 
 ## Quick Removal Steps
 
-### 1. Stop and Uninstall Agent on Target Server
+### Method 1: Complete Automated Removal (Recommended)
+
+```bash
+# Clone the monitoring repository (if not already done)
+git clone https://github.com/sebastian-fahrenkrog/beszel-monitoring.git
+cd beszel-monitoring
+
+# Remove both agent AND hub entry in one command
+./scripts/remove-server-complete.sh root@your-server.com
+
+# Or force removal without prompts
+./scripts/remove-server-complete.sh --force root@your-server.com
+```
+
+### Method 2: Manual Step-by-Step Removal
+
+#### Step 1: Remove Agent from Server
 
 ```bash
 # SSH to the server you want to remove
@@ -14,15 +30,23 @@ ssh root@your-server.com
 systemctl stop beszel-agent.service
 systemctl disable beszel-agent.service
 
-# Uninstall using our secure script
-export BESZEL_HUB_URL='https://monitoring.inproma.de'
-export BESZEL_TOKEN='c8a8c7a7-135a-4818-ad7a-0f8581aadc96'
-export BESZEL_KEY='ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILG/StjM0ypoZOCqF+lLrqznYd4y45GKaKGOB6RbXc2H'
-
+# Uninstall using our secure script (automated mode)
+export BESZEL_FORCE_UNINSTALL="true"
 curl -fsSL https://raw.githubusercontent.com/sebastian-fahrenkrog/beszel-monitoring/main/scripts/install-beszel-agent.sh | bash -s -- uninstall
 ```
 
-### 2. Manual Cleanup (if needed)
+#### Step 2: Remove Server from Hub
+
+```bash
+# From your local machine or hub server
+cd beszel-monitoring
+./scripts/remove-server-from-hub.sh your-server.com
+
+# Or force removal
+./scripts/remove-server-from-hub.sh --force your-server.com
+```
+
+### Method 3: Manual Cleanup (if scripts fail)
 
 If the uninstall script fails, perform manual cleanup:
 
@@ -45,15 +69,48 @@ sudo userdel beszel
 sudo systemctl daemon-reload
 ```
 
-### 3. Remove from Hub Dashboard
+## Available Scripts
 
-The server will automatically disappear from the Beszel hub dashboard after it stops connecting. However, you can manually remove it:
+### 1. Complete Removal Script (`remove-server-complete.sh`)
 
-1. Open https://monitoring.inproma.de
-2. Log in with your credentials
-3. Navigate to the systems list
-4. Find the server you want to remove
-5. Click the delete/remove button for that server
+Removes both agent and hub entry in one operation:
+
+```bash
+# Basic usage
+./scripts/remove-server-complete.sh root@server.com
+
+# Force mode (no prompts)
+./scripts/remove-server-complete.sh --force server.com
+
+# Only remove from hub (keep agent)
+./scripts/remove-server-complete.sh --hub-only server.com
+
+# Only remove agent (keep in hub)
+./scripts/remove-server-complete.sh --agent-only root@server.com
+```
+
+### 2. Hub-Only Removal Script (`remove-server-from-hub.sh`)
+
+Removes server from hub dashboard via API:
+
+```bash
+# Remove server from hub
+./scripts/remove-server-from-hub.sh server.com
+
+# Force removal
+./scripts/remove-server-from-hub.sh --force server.com
+
+# List all servers in hub
+./scripts/remove-server-from-hub.sh --list
+```
+
+### 3. Agent-Only Removal (install script)
+
+```bash
+# On the target server
+export BESZEL_FORCE_UNINSTALL="true"
+curl -fsSL https://raw.githubusercontent.com/sebastian-fahrenkrog/beszel-monitoring/main/scripts/install-beszel-agent.sh | bash -s -- uninstall
+```
 
 ## Verification
 
@@ -199,6 +256,47 @@ The server will appear as a new system in the dashboard (historical data connect
 - Clean up any monitoring-related cron jobs or scripts
 - Review log rotation and cleanup scripts
 
+## Script Features
+
+### Complete Removal Script Features
+- ✅ Removes agent from server via SSH
+- ✅ Removes server from hub via API
+- ✅ Confirmation prompts (unless forced)
+- ✅ Detailed progress reporting
+- ✅ Partial operation support (hub-only, agent-only)
+- ✅ Hostname extraction from various formats
+
+### Hub Removal Script Features
+- ✅ API-based server removal
+- ✅ Server lookup by name or IP
+- ✅ List all servers in hub
+- ✅ Force mode support
+- ✅ Authentication handling
+
+### Agent Removal Features
+- ✅ Complete cleanup of all files
+- ✅ Service and timer removal
+- ✅ User removal (optional)
+- ✅ Force mode for automation
+- ✅ Verification checks
+
+## Quick Reference
+
+```bash
+# Complete automated removal
+./scripts/remove-server-complete.sh --force root@server.com
+
+# List servers in hub
+./scripts/remove-server-from-hub.sh --list
+
+# Remove from hub only
+./scripts/remove-server-from-hub.sh --force server.com
+
+# Remove agent only (on server)
+export BESZEL_FORCE_UNINSTALL="true"
+curl -fsSL https://raw.githubusercontent.com/sebastian-fahrenkrog/beszel-monitoring/main/scripts/install-beszel-agent.sh | bash -s -- uninstall
+```
+
 ---
 
-**Remember**: Server removal is immediate once the agent stops. The universal token remains valid for other servers.
+**Remember**: Complete removal requires both agent cleanup AND hub removal. The universal token remains valid for other servers.

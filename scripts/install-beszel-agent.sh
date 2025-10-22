@@ -321,18 +321,28 @@ uninstall() {
     # Remove installation directory
     rm -rf "$INSTALL_DIR"
     
-    # Remove data directory (optional - contains state)
-    read -p "Remove data directory ${DATA_DIR}? (y/N): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Remove data directory (with auto-yes if BESZEL_FORCE_UNINSTALL is set)
+    if [[ "${BESZEL_FORCE_UNINSTALL:-}" == "true" ]]; then
+        log_info "Force mode: removing data directory"
         rm -rf "$DATA_DIR"
+    else
+        read -p "Remove data directory ${DATA_DIR}? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            rm -rf "$DATA_DIR"
+        fi
     fi
     
-    # Remove user (optional)
-    read -p "Remove user ${SERVICE_USER}? (y/N): " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
+    # Remove user (with auto-yes if BESZEL_FORCE_UNINSTALL is set)
+    if [[ "${BESZEL_FORCE_UNINSTALL:-}" == "true" ]]; then
+        log_info "Force mode: removing user"
         userdel "$SERVICE_USER" 2>/dev/null || true
+    else
+        read -p "Remove user ${SERVICE_USER}? (y/N): " -n 1 -r
+        echo
+        if [[ $REPLY =~ ^[Yy]$ ]]; then
+            userdel "$SERVICE_USER" 2>/dev/null || true
+        fi
     fi
     
     systemctl daemon-reload
