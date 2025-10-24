@@ -29,12 +29,16 @@ Beszel is a lightweight server monitoring platform built with Go and PocketBase,
 - `manage_config.sh` - Configuration management tool
 
 ### Key Documentation (docs/)
-- `NEW_SERVER_SETUP.md` - **Quick guide for adding new servers (START HERE!)**
+- `README.md` - Documentation overview and navigation map
+- `QUICK_REFERENCE.md` - **Quick commands and navigation (START HERE!)**
+- `NEW_SERVER_SETUP.md` - Complete guide for adding new servers
 - `REMOVE_SERVER.md` - Server removal guide
-- `SERVERS.md` - Server inventory and tracking
-- `INSTALLATION_INSTRUCTIONS.md` - Detailed installation guide
+- `SERVERS.md` - Server inventory (26 servers)
 - `WEBSOCKET_TROUBLESHOOTING.md` - Common issues and solutions
-- `CUSTOM_HEALTH_CHECKS.md` - Custom monitoring guide
+- `HEALTH_CHECK_CAPABILITIES.md` - Monitoring capabilities and alert configuration
+- `CONFIG_MANAGEMENT.md` - Infrastructure as Code with config.yml
+- `MONITORING_STRATEGY_COMPARISON.md` - Beszel vs Uptime Kuma comparison
+- `SECURITY.md` - Security best practices
 
 ### Source Code Reference
 - `ai_docs/src/beszel/` - Complete Beszel source code for implementation details

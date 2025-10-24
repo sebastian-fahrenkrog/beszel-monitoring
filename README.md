@@ -50,9 +50,16 @@ sudo ./scripts/add-server.sh
 ├── manage_config.sh              # Configuration management tool
 ├── verify_agent_connection.sh    # Connection verification script
 └── docs/
+    ├── README.md                 # Documentation overview and navigation
+    ├── QUICK_REFERENCE.md        # Quick command reference (START HERE)
     ├── NEW_SERVER_SETUP.md       # Complete guide for adding servers
+    ├── REMOVE_SERVER.md          # Server removal guide
     ├── WEBSOCKET_TROUBLESHOOTING.md # Troubleshooting guide
-    └── QUICK_REFERENCE.md        # Quick command reference
+    ├── HEALTH_CHECK_CAPABILITIES.md # Monitoring capabilities and alerts
+    ├── SERVERS.md                # Server inventory (26 servers)
+    ├── CONFIG_MANAGEMENT.md      # Infrastructure as Code guide
+    ├── MONITORING_STRATEGY_COMPARISON.md # Beszel vs Uptime Kuma
+    └── SECURITY.md               # Security best practices
 ```
 
 ## 🔧 Installation Script Features
