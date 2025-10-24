@@ -163,3 +163,4 @@ maintenance.sh
 health-check.sh
 deployment-*.sh
 deployment-*.mdai_docs/src/
+ai_docs/src/

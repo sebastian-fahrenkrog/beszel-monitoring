@@ -20,17 +20,25 @@ Beszel is a lightweight server monitoring platform built with Go and PocketBase,
 
 ## Important Files and Scripts
 
-### Core Scripts (scripts/)
-- `install-beszel-agent.sh` - Main agent installation script with WebSocket configuration
-- `add-server.sh` - Helper script for adding new servers
-- `remove-server-complete.sh` - Complete server removal (agent + hub)
+### Core Scripts (scripts/) - Consolidated 2025-10-24
+
+**Server Addition:**
+- `add-server-auto.sh` - **RECOMMENDED** - Automated addition with token regeneration
+- `add-server.sh` - Manual addition (requires pre-set environment variables)
+- `install-beszel-agent.sh` - Core agent installer (called by add-server scripts)
+
+**Server Removal:**
+- `remove-server-complete.sh` - Complete removal (agent + hub)
 - `remove-server-from-hub.sh` - Hub-only removal via API
+
+**Verification & Management:**
 - `verify_agent_connection.sh` - Verify agent connection and metrics collection
-- `manage_config.sh` - Configuration management tool
+- `manage_config.sh` - Configuration management (export/import/backup)
 
 ### Key Documentation (docs/)
 - `README.md` - Documentation overview and navigation map
 - `QUICK_REFERENCE.md` - **Quick commands and navigation (START HERE!)**
+- `SCRIPTS_REFERENCE.md` - **Complete scripts usage guide (NEW!)**
 - `NEW_SERVER_SETUP.md` - Complete guide for adding new servers
 - `REMOVE_SERVER.md` - Server removal guide
 - `SERVERS.md` - Server inventory (26 servers)
