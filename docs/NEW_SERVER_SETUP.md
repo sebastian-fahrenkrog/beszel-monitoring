@@ -171,7 +171,86 @@ systemctl restart beszel-agent
 | "invalid signature" | Wrong SSH key - must use key from `id_ed25519` |
 | "401 unauthorized" | Token expired - regenerate via API |
 | "connection refused" | Network issue - check outbound HTTPS |
+| "Failed to load public keys: no key provided" | Corrupted systemd service file - see recovery steps below |
 | Different hostname | Normal - uses actual system hostname |
+
+### Agent Service Fails to Start
+
+**Symptom**: `journalctl -u beszel-agent` shows "Failed to load public keys: no key provided" repeatedly
+
+**Cause**: In older versions of `add-server-auto.sh`, log messages were captured in environment variables instead of just the token/key values.
+
+**Quick Check**:
+```bash
+# Check if environment variables are corrupted
+systemctl show beszel-agent --property=Environment | grep BESZEL_AGENT_TOKEN
+# If you see color codes ([0;34m) or log messages, the file is corrupted
+```
+
+**Recovery**:
+```bash
+# SSH to affected server
+ssh root@affected-server.com
+
+# View corrupted values (look for actual token/key at the end)
+cat /etc/systemd/system/beszel-agent.service | grep -A 2 "BESZEL_AGENT_TOKEN"
+cat /etc/systemd/system/beszel-agent.service | grep -A 2 "BESZEL_AGENT_KEY"
+
+# Extract the actual values (typically the last line contains the real token/key)
+# TOKEN: Look for UUID pattern (e.g., 0eb2e974-3d7d-4ff0-bfe5-d357dd30c794)
+# KEY: Look for "ssh-ed25519 AAAAC3Nza..."
+
+# Create corrected service file (replace YOUR-ACTUAL-* with extracted values)
+sudo bash -c 'cat > /etc/systemd/system/beszel-agent.service << "EOF"
+[Unit]
+Description=Beszel Monitoring Agent (WebSocket Mode)
+Documentation=https://github.com/henrygd/beszel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=beszel
+Group=beszel
+WorkingDirectory=/var/lib/beszel-agent
+
+Environment="BESZEL_AGENT_HUB_URL=https://monitoring.inproma.de"
+Environment="BESZEL_AGENT_TOKEN=YOUR-ACTUAL-TOKEN-HERE"
+Environment="BESZEL_AGENT_KEY=ssh-ed25519 YOUR-ACTUAL-KEY-HERE"
+
+Environment="BESZEL_AGENT_LOG_LEVEL=info"
+
+ExecStart=/opt/beszel-agent/beszel-agent
+Restart=always
+RestartSec=10
+RestartPreventExitStatus=0
+
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+NoNewPrivileges=true
+ReadWritePaths=/var/lib/beszel-agent /tmp
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestartRealtime=true
+
+LimitNOFILE=65536
+TasksMax=4096
+
+[Install]
+WantedBy=multi-user.target
+EOF'
+
+# Reload and restart
+sudo systemctl daemon-reload
+sudo systemctl restart beszel-agent
+sudo systemctl status beszel-agent
+```
+
+**Prevention**: This issue is fixed in the latest version of `add-server-auto.sh` (all log messages now redirect to stderr).
 
 ### Success Indicators
 

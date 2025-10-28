@@ -13,13 +13,14 @@ This document tracks all servers currently monitored by the Beszel monitoring sy
 |--------|-----|------|--------|-------|
 | monitoring.inproma.de | https://monitoring.inproma.de | Hub | ✅ Active | Docker deployment with nginx proxy |
 
-## Monitored Agents (26 servers)
+## Monitored Agents (27 servers)
 
 | Hostname | IP/Domain | Added | Status | Specs | Notes |
 |----------|-----------|-------|--------|-------|-------|
 | hosting.dev.testserver.online | m.dev.testserver.online | 2024-10-21 | ✅ Active | Linux | First agent, testing WebSocket mode |
 | master.corespot-manager.com | inproma.dataguide.de | 2024-10-22 | ✅ Active | 16 CPU, 61GB RAM, Docker | Production server |
 | backup | backup01.inproma.de | 2024-10-22 | ✅ Active | 6 CPU (AMD Ryzen 5 3600), 62GB RAM | Backup server |
+| kihub-demo | kihub-demo.prodsgvo.de | 2025-10-28 | ✅ Active | Linux | Demo server
 | mangal | mangal.whistle-ranger.de | 2024-10-23 | ✅ Active | Linux | Production server |
 | foodstar | foodstar.whistle-ranger.de | 2024-10-23 | ✅ Active | Linux | Production server |
 | samtgemeinde-spelle | samtgemeinde-spelle.whistle-ranger.de | 2024-10-23 | ✅ Active | Linux | Production server |

@@ -127,7 +127,7 @@ check_dependencies() {
 }
 
 regenerate_universal_token() {
-    log_info "Regenerating universal token from hub..."
+    log_info "Regenerating universal token from hub..." >&2
 
     # Get authentication token
     local auth_response
@@ -139,8 +139,8 @@ regenerate_universal_token() {
     auth_token=$(echo "$auth_response" | jq -r '.token')
 
     if [ -z "$auth_token" ] || [ "$auth_token" = "null" ]; then
-        log_error "Failed to authenticate with hub"
-        echo "Response: $auth_response"
+        log_error "Failed to authenticate with hub" >&2
+        echo "Response: $auth_response" >&2
         exit 1
     fi
 
@@ -153,28 +153,28 @@ regenerate_universal_token() {
     universal_token=$(echo "$token_response" | jq -r '.token')
 
     if [ -z "$universal_token" ] || [ "$universal_token" = "null" ]; then
-        log_error "Failed to generate universal token"
-        echo "Response: $token_response"
+        log_error "Failed to generate universal token" >&2
+        echo "Response: $token_response" >&2
         exit 1
     fi
 
-    log_success "Universal token generated: ${universal_token:0:8}...${universal_token: -8}"
+    log_success "Universal token generated: ${universal_token:0:8}...${universal_token: -8}" >&2
     echo "$universal_token"
 }
 
 get_hub_ssh_key() {
-    log_info "Retrieving SSH public key from hub..."
+    log_info "Retrieving SSH public key from hub..." >&2
 
     local ssh_key
     ssh_key=$(ssh -o StrictHostKeyChecking=no "root@${HUB_SERVER}" \
         'ssh-keygen -y -f /opt/beszel-hub/beszel_data/id_ed25519' 2>/dev/null)
 
     if [ -z "$ssh_key" ]; then
-        log_error "Failed to retrieve SSH public key from hub"
+        log_error "Failed to retrieve SSH public key from hub" >&2
         exit 1
     fi
 
-    log_success "SSH public key retrieved"
+    log_success "SSH public key retrieved" >&2
     echo "$ssh_key"
 }
 
@@ -183,7 +183,7 @@ install_agent_on_server() {
     local universal_token="$2"
     local ssh_public_key="$3"
 
-    log_info "Installing agent on ${server}..."
+    log_info "Installing agent on ${server}..." >&2
 
     # Create remote installation command
     local remote_cmd="
@@ -197,10 +197,10 @@ install_agent_on_server() {
 
     # Execute on remote server
     if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 "$server" "$remote_cmd"; then
-        log_success "${server} - Installation successful"
+        log_success "${server} - Installation successful" >&2
         return 0
     else
-        log_error "${server} - Installation failed"
+        log_error "${server} - Installation failed" >&2
         return 1
     fi
 }
